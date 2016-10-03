@@ -75,13 +75,9 @@ void image_feature::add_feature(
 		dense_sampler(mat_gray,1,kp_vec);
 		cv::Ptr<cv::Feature2D> extractor = cv::BRISK::create();
 	    extractor->compute(mat_gray, kp_vec, descriptors);
-	}else if (algorithm_ == "AKAZE"){
-		cv::Ptr<cv::Feature2D> akaze = cv::AKAZE::create();;
-		akaze->detect(mat_gray,kp_vec);
-		akaze->compute(mat_gray,kp_vec,descriptors);
 	}else{
 		throw JUBATUS_EXCEPTION(
-	        converter_exception("input algorithm among these ... RGB, ORB, BRISK, AKAZE"));
+	        converter_exception("input algorithm among these : RGB, ORB or BRISK"));
 	}
     // *logs
 	// std::cout << "keypoints of img: " << kp_vec.size() << std::endl;
