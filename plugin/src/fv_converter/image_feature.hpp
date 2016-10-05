@@ -1,6 +1,9 @@
-	#ifndef JUBATUS_PLUGIN_FV_CONVERTER_IMAGE_FEATURE_HPP_
+#ifndef JUBATUS_PLUGIN_FV_CONVERTER_IMAGE_FEATURE_HPP_
 #define JUBATUS_PLUGIN_FV_CONVERTER_IMAGE_FEATURE_HPP_
 
+#define CV_MAJOR_VERSION CV_MAJOR_VERSION 
+#define CV_MINOR_VERSION CV_MINOR_VERSION
+#define CV_SUBMINOR_VERSION CV_SUBMINOR_VERSION
 
 #include <map>
 #include <string>
@@ -24,9 +27,10 @@ class image_feature:public jubatus::core::fv_converter::binary_feature{
 public:
 	virtual ~image_feature(){}
 	image_feature(
+		const std::string& algorithm = "RGB",
+		const bool resize = false,
 		float x_size = 50.0,
-		float y_size = 50.0,
-		const std::string& algorithm = "RGB"
+		float y_size = 50.0
 		);
 	void add_feature(
 		const std::string& key,
@@ -39,9 +43,10 @@ public:
 		std::vector<cv::KeyPoint>& keypoint) const;
 
 private:
+	std::string algorithm_;
+	bool resize_;
 	float x_size_;
 	float y_size_;
-	std::string algorithm_;
 };
 
 
