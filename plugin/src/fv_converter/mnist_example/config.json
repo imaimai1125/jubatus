@@ -1,0 +1,36 @@
+{
+  "converter" : {
+    "string_filter_types" : {},
+    "string_filter_rules" : [],
+    "num_filter_types" : {},
+    "num_filter_rules" : [],
+    "string_types" : {},
+    "string_rules" : [
+    { "key" : "*", "type" : "str", "sample_weight" : "bin", "global_weight" : "bin" }
+    ],
+    "num_types" : {},
+    "num_rules" : [
+    { "key" : "*", "type" : "num" }
+    ],
+    "binary_types": {
+      "image": {
+        "method": "dynamic",
+        "path": "libimage_feature.so",
+        "resize":"false",
+        "x_size":"16.0",
+        "y_size":"16.0",
+        "algorithm":"ORB",
+        "function": "create"
+      }
+    },
+    "binary_rules": [
+    { "key": "*", "type": "image" }
+    ]
+  },
+
+  "parameter":{
+    "regularization_weight" : 0.2
+  },
+
+  "method" : "CW"
+}

@@ -51,22 +51,22 @@ void image_feature::add_feature(
 		cv::Mat mat_orig = cv::imdecode(cv::Mat(buf), CV_LOAD_IMAGE_COLOR);
 	#endif
 
-	// mat resize and gray scale for DENSE sampling	
+	// mat resize and gray scale for DENSE sampling
 	cv::Mat mat_resize;
 	cv::Mat mat_gray;
 	if (resize_){
 		float m_x = x_size_ / mat_orig.cols;
 		float m_y = y_size_ / mat_orig.rows;
-		cv::resize(mat_orig, mat_resize, cv::Size(), m_x , m_y);	
+		cv::resize(mat_orig, mat_resize, cv::Size(), m_x , m_y);
 	}else{
 		cv::resize(mat_orig, mat_resize, cv::Size(), 1, 1);
 	}
-	
+
 
 	#if (CV_MAJOR_VERSION == 3)
-		cv::cvtColor(mat_resize, mat_gray, cv::COLOR_BGR2GRAY); 
+		cv::cvtColor(mat_resize, mat_gray, cv::COLOR_BGR2GRAY);
 	#elif (CV_MAJOR_VERSION == 2)
-		cv::cvtColor(mat_resize, mat_gray, CV_BGR2GRAY); 
+		cv::cvtColor(mat_resize, mat_gray, CV_BGR2GRAY);
 	#endif
 
 	cv::Mat descriptors;
@@ -92,7 +92,7 @@ void image_feature::add_feature(
 			cv::Ptr<cv::Feature2D> extractor = cv::ORB::create(500,1.2f,8,12,0,2,0,31);
 	 		extractor->compute(mat_gray, kp_vec, descriptors);
 	 	#elif (CV_MAJOR_VERSION == 2)
-			cv::ORBDescriptorExtractor extractor(500,1.2f,8,12,0,2,0,31);
+			cv::OrbDescriptorExtractor extractor(500,1.2f,8,12,0,2,0,31);
 			extractor.compute(mat_gray, kp_vec, descriptors);
 		#endif
 
@@ -106,11 +106,8 @@ void image_feature::add_feature(
 			int p = descriptors.at<uchar>(i,j);
 			oss << key << "-"<< i << "-" << j << "-" << p ;
 			ret_fv.push_back(std::make_pair(oss.str(),p));
-		}    	
+		}
 	}
-	std::cout << CV_MAJOR_VERSION << std::endl;
-	std::cout << CV_MINOR_VERSION << std::endl;
-
 }
 }  // namespace fv_converter
 }  // namespace plugin
@@ -121,12 +118,12 @@ jubatus::plugin::fv_converter::image_feature* create(
 		const std::map<std::string, std::string>& params) {
 	using jubatus::util::lang::lexical_cast;
 	using jubatus::core::fv_converter::get_with_default;
-	
+
 	std::string algorithm = get_with_default(params,"algorithm","RGB");
 	std::string resize_str = get_with_default(params,"resize","false");
 	float x_size = lexical_cast<float>(get_with_default(params,"x_size","50.0"));
 	float y_size = lexical_cast<float>(get_with_default(params,"y_size","50.0"));
-	
+
 	if (resize_str != "true" && resize_str != "false"){
 		throw JUBATUS_EXCEPTION(jubatus::core::fv_converter::converter_exception(
 			"resize must be a boolean value"));
