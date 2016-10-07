@@ -18,8 +18,6 @@
 #define JUBATUS_PLUGIN_FV_CONVERTER_IMAGE_FEATURE_HPP_
 
 #define CV_MAJOR_VERSION CV_MAJOR_VERSION
-#define CV_MINOR_VERSION CV_MINOR_VERSION
-#define CV_SUBMINOR_VERSION CV_SUBMINOR_VERSION
 
 #include <opencv2/opencv.hpp>
 #include <map>
@@ -43,8 +41,8 @@ class image_feature:public jubatus::core::fv_converter::binary_feature {
     image_feature(
       const std::string& algorithm = "RGB",
       const bool resize = false,
-      float x_size = 50.0,
-      float y_size = 50.0);
+      const float x_size = 50.0,
+      const float y_size = 50.0);
     void add_feature(
       const std::string& key,
       const std::string& value,

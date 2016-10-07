@@ -14,9 +14,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-// #include "jubatus/util/concurrent/thread.h"
-// #include "jubatus/util/lang/bind.h"
-// #include "jubatus/util/lang/scoped_ptr.h"
+
 #include <fstream>
 #include <sstream>
 #include <string>

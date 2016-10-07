@@ -17,6 +17,7 @@
         "method": "dynamic",
         "path": "libimage_feature.so",
         "algorithm":"ORB",
+        "resize":"false",
         "function": "create"
       }
     },

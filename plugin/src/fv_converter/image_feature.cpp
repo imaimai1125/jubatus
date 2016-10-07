@@ -39,6 +39,10 @@ image_feature::image_feature(
   resize_(resize),
   x_size_(x_size),
   y_size_(y_size) {
+  if (x_size_ <= 0 || y_size_<= 0) {
+    throw JUBATUS_EXCEPTION(
+        converter_exception("image size must be a positive number"));
+  }
 }
 
 void image_feature::dense_sampler(
@@ -56,16 +60,16 @@ void image_feature::dense_sampler(
 
 
 void image_feature::add_feature(
-const std::string& key,
-const std::string& value,
-std::vector<std::pair<std::string, float> >& ret_fv) const {
+  const std::string& key,
+  const std::string& value,
+  std::vector<std::pair<std::string, float> >& ret_fv) const {
   std::vector<unsigned char> buf(value.begin(), value.end());
 
-  #if(CV_MAJOR_VERSION == 3)
+#if(CV_MAJOR_VERSION == 3)
   cv::Mat mat_orig = cv::imdecode(cv::Mat(buf), cv::IMREAD_COLOR);
-  #elif(CV_MAJOR_VERSION == 2)
+#elif(CV_MAJOR_VERSION == 2)
   cv::Mat mat_orig = cv::imdecode(cv::Mat(buf), CV_LOAD_IMAGE_COLOR);
-  #endif
+#endif
 
   // mat resize and gray scale for DENSE sampling
   cv::Mat mat_resize;
@@ -79,14 +83,11 @@ std::vector<std::pair<std::string, float> >& ret_fv) const {
   }
 
 
-  #if(CV_MAJOR_VERSION == 3)
+#if(CV_MAJOR_VERSION == 3)
   cv::cvtColor(mat_resize, mat_gray, cv::COLOR_BGR2GRAY);
-  #elif(CV_MAJOR_VERSION == 2)
+#elif(CV_MAJOR_VERSION == 2)
   cv::cvtColor(mat_resize, mat_gray, CV_BGR2GRAY);
-  #endif
-
-  cv::Mat descriptors;
-  std::vector<cv::KeyPoint> kp_vec;
+#endif
 
   // feature extractors
   if (algorithm_ == "RGB") {
@@ -95,33 +96,37 @@ std::vector<std::pair<std::string, float> >& ret_fv) const {
         const cv::Vec3b& vec = mat_resize.at<cv::Vec3b>(y, x);
         for (int c = 0; c < 3; ++c) {
           std::ostringstream oss;
-          oss << key << '-' << x << '-' << y << '-' << c;
+          oss << key << '#' << algorithm_ 
+              << '/' << x << '-' << y << '-' << c;
           float val = static_cast<float>(vec[c]) / 255.0;
           ret_fv.push_back(std::make_pair(oss.str(), val));
         }
       }
     }
   } else if (algorithm_ == "ORB") {
+    cv::Mat descriptors;
+    std::vector<cv::KeyPoint> kp_vec;
     dense_sampler(mat_gray, 1, kp_vec);
-    #if(CV_MAJOR_VERSION == 3)
+#if(CV_MAJOR_VERSION == 3)
     cv::Ptr<cv::Feature2D> extractor =
       cv::ORB::create(500, 1.2f, 8, 12, 0, 2, 0, 31);
     extractor->compute(mat_gray, kp_vec, descriptors);
-    #elif(CV_MAJOR_VERSION == 2)
+#elif(CV_MAJOR_VERSION == 2)
     cv::OrbDescriptorExtractor extractor(500, 1.2f, 8, 12, 0, 2, 0, 31);
     extractor.compute(mat_gray, kp_vec, descriptors);
-    #endif
-  } else {
-    throw JUBATUS_EXCEPTION(
-    converter_exception("input algorithm among these : RGB or ORB"));
-  }
-  for (int i = 0; i < descriptors.rows; ++i) {
-    for (int j = 0; j < descriptors.cols; ++j) {
-      std::ostringstream oss;
-      int p = descriptors.at<uchar>(i, j);
-      oss << key << "-"<< i << "-" << j << "-" << p;
-      ret_fv.push_back(std::make_pair(oss.str(), p));
+#endif
+    for (int i = 0; i < descriptors.rows; ++i) {
+      for (int j = 0; j < descriptors.cols; ++j) {
+        std::ostringstream oss;
+        int p = descriptors.at<uchar>(i, j);
+        oss << key << '#' << algorithm_ 
+            <<'/'<< i << "-" << j << "-" << p;
+        ret_fv.push_back(std::make_pair(oss.str(), p));
+      }
     }
+  } else {
+      throw JUBATUS_EXCEPTION(
+        converter_exception("input algorithm among these : RGB or ORB"));
   }
 }
 
