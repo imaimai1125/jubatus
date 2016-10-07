@@ -16,9 +16,6 @@
       "image": {
         "method": "dynamic",
         "path": "libimage_feature.so",
-        "resize":"false",
-        "x_size":"16.0",
-        "y_size":"16.0",
         "algorithm":"ORB",
         "function": "create"
       }
@@ -27,10 +24,8 @@
     { "key": "*", "type": "image" }
     ]
   },
-
-  "parameter":{
-    "regularization_weight" : 0.2
-  },
-
-  "method" : "CW"
+  "method" : "CW",
+  "parameter" : {
+    "regularization_weight" : 1.0
+  }
 }
